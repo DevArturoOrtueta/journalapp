@@ -1,9 +1,9 @@
 import { Link as RouterLink } from 'react-router-dom';
-import { Button, Grid, Link, TextField, Typography } from '@mui/material';
+import { Alert, Button, Grid, Link, TextField, Typography } from '@mui/material';
 import { AuthLayout } from '../layout/AuthLayout';
 import { useForm } from '../../hooks';
-import { useState } from 'react';
-import {useDispatch} from 'react-redux'
+import { useMemo, useState } from 'react';
+import {useDispatch, useSelector} from 'react-redux'
 import { startCreatingUserWithEmailPassword } from '../../store/auth/thunks';
 
 const formdata = {
@@ -17,6 +17,9 @@ const formValidations = {
   password: [(value) => value.length >= 6, 'El password debe de tener mas de 6 letras'],
   displayName: [(value) => value.length >= 1, 'El nombre es obligatorio']
 }
+
+const {status, errorMessage} = useSelector(state => state.auth);
+const isCheckingAuthentication = useMemo(() => status === 'checking', [status]);
 
 export const RegisterPage = () => {
   const dispatch = useDispatch()
@@ -80,7 +83,12 @@ export const RegisterPage = () => {
             
             <Grid container spacing={ 2 } sx={{ mb: 2, mt: 1 }}>
               <Grid item xs={ 12 }>
-                <Button type='submit 'variant='contained' fullWidth>
+                <Alert>
+                  
+                </Alert>
+              </Grid>
+              <Grid item xs={ 12 }>
+                <Button disable={isCheckingAuthentication} type='submit 'variant='contained' fullWidth>
                   Crear cuenta
                 </Button>
               </Grid>
