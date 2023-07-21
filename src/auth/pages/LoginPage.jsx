@@ -9,6 +9,9 @@ import { checkingAuthentication, startGoogleSignIn, startLoginWithEmailPassword 
 import { useMemo } from 'react';
 import { loginWithEmailPassword } from '../../firebase/providers';
 
+const formData = {
+
+}
 
 export const LoginPage = () => {
 
@@ -16,18 +19,16 @@ export const LoginPage = () => {
 
   const dispatch = useDispatch();
 
-  const {email, password, onInputChange} = useForm({})
+  const {email, password, onInputChange} = useForm(formData)
   const isAuthenticating = useMemo(() => status ==='checking', [status]);
 
   const onSubmit = (event) => {
     event.preventDefault();
-    console.log({email, password})
     dispatch(startLoginWithEmailPassword({email, password}))
   }
 
   const onGoogleSignIn = (event) => {
     event.preventDefault();
-    console.log('Google Sign In')
     dispatch(startGoogleSignIn())
   }
   return (

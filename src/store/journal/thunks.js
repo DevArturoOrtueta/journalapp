@@ -2,7 +2,7 @@ import { async } from "@firebase/util"
 import { collection, doc, setDoc } from "firebase/firestore/lite"
 import { FirebaseDB } from "../../firebase/config"
 import { loadNotes } from "../../helper"
-import { addNewEmptyNote, setActiveNote, savingNotes, setNotes } from "./journalSlice"
+import { addNewEmptyNote, setActiveNote, savingNotes, setNotes, setSaving, updateNote } from "./journalSlice"
 
 export const startNewNote = () => {
     return async( dispatch, getState) => {
@@ -39,5 +39,24 @@ export const startLoadingNotes = () => {
 
         dispatch(setNotes(notes))
         
+    }
+}
+
+export const startSaveNote = () => {
+    return async(dispatch, getState) => {
+
+        dispatch(setSaving());
+        const {uid} = getState().auth;
+        const {active:note} = getState().journal;
+        const noteToFireStore = {
+            ...note
+        }
+
+        delete noteToFireStore.id;
+
+        const docRef = doc(FirebaseDB, `${uid}/journal/notes/${note.id}`);
+        await setDoc(docRef, noteToFireStore, {merge: true}) //el merge hace que se fusione con los campos que ya existe, osea que si no existe un campo lo agregue
+
+        dispatch(updateNote(note))
     }
 }
